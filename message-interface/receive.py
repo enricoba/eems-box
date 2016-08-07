@@ -1,5 +1,5 @@
-#!/usr/bin/env python
 import pika
+import json
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
@@ -10,6 +10,8 @@ channel.queue_declare(queue='hello')
 
 def callback(ch, method, properties, body):
     print(" [x] Received %r" % body)
+    print json.loads(body)
+    print type(json.loads(body))
 
 channel.basic_consume(callback,
                       queue='hello',
