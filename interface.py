@@ -7,15 +7,13 @@ class RMI(object):
         """Public object *RMI* provides functions to interact with the message interface.
 
 
-        :param host:
-            Expects *string*
+        :param host: *string*
         """
         if host is None:
             self.host = 'localhost'
         else:
             self.host = host
 
-        # initial connection
         self.connection = None
         self.channel = None
         self.message = None
@@ -24,10 +22,8 @@ class RMI(object):
         """Private function *__connect* reconnects to the host and establishes the channel after disconnect function has been
         called.
 
-        :param queue:
-            Expects *string*.
-        :return:
-            Returns *None*.
+        :param queue: *string*.
+        :return: *None*
         """
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
         self.channel = self.connection.channel()
@@ -36,8 +32,7 @@ class RMI(object):
     def __disconnect(self):
         """Private function *__disconnect* closes the connection.
 
-        :return:
-            Return *None*.
+        :return: *None*
         """
         self.connection.close()
         self.connection = None
@@ -46,12 +41,9 @@ class RMI(object):
     def send_single(self, queue, message):
         """Public function *send_single* delivers messages to the RabbitMQ server.
 
-        :param queue:
-            Expects *string*.
-        :param message:
-            Expects *dict*.
-        :return:
-            Returns *None*.
+        :param queue: *string*
+        :param message: *dict*
+        :return: *None*
         """
         self.__connect(queue=queue)
         body = json.dumps(message)
@@ -65,21 +57,16 @@ class RMI(object):
         :param method:
         :param properties:
         :param body:
-        :return:
-            Returns *None*.
+        :return: *None*
         """
-        # self.__disconnect()
-        print body
-        self.message = body
+        self.message = json.loads(body)
         self.channel.stop_consuming()
 
     def receive(self, queue):
         """Public function *receive* can be called to receive messages from the queue.
 
-        :param queue:
-            Expects *string*.
-        :return:
-            Returns *dict*.
+        :param queue: *string*
+        :return: *dict*
         """
         self.__connect(queue=queue)
         self.channel.basic_consume(self.__callback, queue=queue, no_ack=True)

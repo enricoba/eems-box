@@ -1,6 +1,8 @@
+from interface import RMI
 import logging
 
-### VARIABLES
+
+# VARIABLES
 # STR
 # con_str_01: log format
 # con_str_02: log date format
@@ -9,7 +11,7 @@ import logging
 # DICT
 # con_dic_01: Log-level information
 
-### Message to Log:
+# Message to Log:
 # level: DEBUG, INFO, WARNING, ERROR, CRITICAL
 # source: str() z.B. Display-Job, GSM-Job, Core-Job, ...
 # msg: str()
@@ -19,11 +21,11 @@ import logging
 class Log(object):
     def __init__(self):
         # Define Logger
-        con_str_01 = '%(asctime)s %(levelname)s %(message)s'
+        con_str_01 = '[*] %(asctime)s %(levelname)s %(message)s'
         con_str_02 = '%Y-%m-%d %H:%M:%S'
         con_str_03 = 'eems.log'
 
-        logging.basicConfig(level=logging.DEBUG,
+        logging.basicConfig(level=logging.INFO,
                             format=con_str_01,
                             datefmt=con_str_02,
                             filename=con_str_03)
@@ -36,28 +38,22 @@ class Log(object):
                            'CRITICAL': 50}
 
     def write_log(self, msg_as_dict):
+        """Public function *write_log* writes messages to the log file.
+
+        :param msg_as_dict: *dict*
+        :return: *None*
         """
-        Function to write logs to the log-flie
-        :param msg_as_dict:
-        Message to log given as a dict. Key of the Dict are level, source and msg
-
-        :return:
-        nothing
-        """
-        self.logger.log(self.con_dic_01[msg_as_dict['level']], '{}: {}'.format(msg_as_dict['source'], msg_as_dict['msg']))
+        self.logger.log(self.con_dic_01[msg_as_dict[u'level']],
+                        '{}: {}'.format(msg_as_dict[u'source'],
+                                        msg_as_dict[u'msg']))
 
 
-# while True:
-#     msg_2_log =
-#     write_log(msg_2_log)
+def main():
+    logger = Log()
+    bus = RMI()
+    while True:
+        message = bus.receive('logger')
+        logger.write_log(message)
 
-
-# EXAMPLE
-test_dict = {'level':   'CRITICAL',  # MUSS grossgeschrieben werden
-             'source':  'Monitoring-Job',
-             'msg':     'Read DS18B20 failed'}
-
-logger = Log()
-logger.write_log(test_dict)
-
-
+if __name__ == '__main__':
+    main()
