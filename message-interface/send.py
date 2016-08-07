@@ -1,20 +1,10 @@
-import pika
-import json
+import interface
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
-channel = connection.channel()
-
-channel.queue_declare(queue='hello')
-
+interface = interface.RMI()
 message = {
-    '1.': 10,
-    '2.': 30
+    '1': 20,
+    '2': 30
 }
+interface.send_single('test', message)
 
-channel.basic_publish(exchange='',
-                      routing_key='hello',
-                      body=json.dumps(message))
-print(" [x] Sent 'Hello World!'")
-connection.close()
