@@ -67,13 +67,25 @@ class MessageBus(object):
         self.channel.basic_publish(exchange='', routing_key='logger', body=body)
         self.__disconnect()
 
+    def send_display(self, action):
+        """Public function *send_single* delivers messages to the RabbitMQ server.
+
+        :param action: *string*
+        :return: *None*
+        """
+        message = {'action': action}
+        self.__connect(queue='display')
+        body = json.dumps(message)
+        self.channel.basic_publish(exchange='', routing_key='display', body=body)
+        self.__disconnect()
+
     def __callback(self, ch, method, properties, body):
         """Private function *__callback* catches the values returned by the message.
 
         :param ch:
         :param method:
         :param properties:
-        :param body:
+        :param body: *string*
         :return: *None*
         """
         self.message = json.loads(body)
