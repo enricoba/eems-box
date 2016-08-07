@@ -44,7 +44,7 @@ class Log(object):
         :return:
         nothing
         """
-        self.logger.log(self.con_dic_01[msg_as_dict['level']], '{}_{}'.format(msg_as_dict['source'], msg_as_dict['msg']))
+        self.logger.log(self.con_dic_01[msg_as_dict['level']], '{}: {}'.format(msg_as_dict['source'], msg_as_dict['msg']))
 
 
 # while True:
