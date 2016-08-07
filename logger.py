@@ -52,9 +52,7 @@ def main():
     logger = Logger()
     bus = MessageBus()
     while True:
-        print 'warten'
         message = bus.receive('logger')
-        print message
         logger.write_log(message)
 
 if __name__ == '__main__':

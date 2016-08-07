@@ -88,5 +88,6 @@ class MessageBus(object):
         self.__connect(queue=queue)
         self.channel.basic_consume(self.__callback, queue=queue, no_ack=True)
         self.channel.start_consuming()
+        message = self.message
         self.__disconnect()
-        return self.message
+        return message
