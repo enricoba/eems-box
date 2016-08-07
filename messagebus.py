@@ -2,7 +2,7 @@ import pika
 import json
 
 
-class RMI(object):
+class MessageBus(object):
     def __init__(self, host=None):
         """Public object *RMI* provides functions to interact with the message interface.
 
@@ -37,6 +37,7 @@ class RMI(object):
         self.connection.close()
         self.connection = None
         self.channel = None
+        self.message = None
 
     def send_single(self, queue, message):
         """Public function *send_single* delivers messages to the RabbitMQ server.
@@ -48,6 +49,22 @@ class RMI(object):
         self.__connect(queue=queue)
         body = json.dumps(message)
         self.channel.basic_publish(exchange='', routing_key=queue, body=body)
+        self.__disconnect()
+
+    def send_logger(self, level='INFO', source=None, msg=None):
+        """Public function *send_single* delivers messages to the RabbitMQ server.
+
+        :param level: *string*
+        :param source: *string*
+        :param msg: *string*
+        :return: *None*
+        """
+        message = {'level':     level,
+                   'source':    source,
+                   'msg':       msg}
+        self.__connect(queue='logger')
+        body = json.dumps(message)
+        self.channel.basic_publish(exchange='', routing_key='logger', body=body)
         self.__disconnect()
 
     def __callback(self, ch, method, properties, body):

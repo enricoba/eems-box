@@ -1,4 +1,4 @@
-from interface import RMI
+from messagebus import MessageBus
 import logging
 
 
@@ -18,7 +18,7 @@ import logging
 
 
 # Define Functions for Logger
-class Log(object):
+class Logger(object):
     def __init__(self):
         # Define Logger
         con_str_01 = '[*] %(asctime)s %(levelname)s %(message)s'
@@ -49,10 +49,12 @@ class Log(object):
 
 
 def main():
-    logger = Log()
-    bus = RMI()
+    logger = Logger()
+    bus = MessageBus()
     while True:
+        print 'warten'
         message = bus.receive('logger')
+        print message
         logger.write_log(message)
 
 if __name__ == '__main__':

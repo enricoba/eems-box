@@ -1,14 +1,17 @@
-import subprocess
 import time
+import subprocess
+from messagebus import MessageBus
 
 
 # start jobs
 class JobHandler(object):
     def __init__(self, job):
-        command = ['python', '{}'.format(job)]
+        command = ['python', '{}'.format(job), '&']
         self.job = subprocess.Popen(command)
+        time.sleep(1)
 
     def term(self):
+        time.sleep(1)
         self.job.terminate()
 
     def poll(self):
@@ -16,24 +19,16 @@ class JobHandler(object):
 
 
 def main():
-    logger = JobHandler('message-interface/receive.py')
+    bus = MessageBus()
+    bus.send_logger(source='core', msg='core-job startup')
 
-    message = {
-        'action':   'start',
-        'job':      'logger'
-    }
+    logger = JobHandler('logger.py')
+    print 'send message'
+    bus.send_logger(source='core', msg='logger-job startup')
 
-    message = {
-        'event':    str(),  # 'error'/'warning'/'debug'/'info'
-        'content':  str()   # content of the event message
-    }
-
-    while True:
-        # 1. position = wait for message
-
-        if message['action'] == 'stop':
-            if message['job'] == 'logger':
-                logger.term()
+    print 'vor sleep'
+    bus.send_logger(source='core', msg='logger-job shutdown')
+    logger.term()
 
 
 if __name__ == '__main__':
