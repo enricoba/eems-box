@@ -12,7 +12,7 @@ def main():
     time.sleep(timestamp - time.time())
 
     while True:
-        # call for values
+        # call for values and write to DB
         print 'monitoring every 2 seconds'
         timestamp += interval
         time.sleep(timestamp - time.time())
