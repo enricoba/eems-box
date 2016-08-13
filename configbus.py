@@ -45,4 +45,3 @@ class Monitoring(ConfigBus):
             else:
                 conf_new += conf[x]
         self._write(conf_new)
-
