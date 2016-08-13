@@ -50,9 +50,8 @@ class Logger(object):
 
 def main():
     logger = Logger()
-    bus = MessageBus()
     while True:
-        message = bus.receive('logger')
+        message = MessageBus.receive('logger')
         logger.write_log(message)
 
 if __name__ == '__main__':

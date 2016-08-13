@@ -1,9 +1,9 @@
-from interface import RMI
+from messagebus import MessageBus
 
 
-bus = RMI()
 message = {'level':     'WARNING',
            'source':    'core',
            'msg':       'Hi, Im the core!'}
-bus.send_single('logger', message)
 
+MessageBus.send('logger', message)
+# MessageBus.logger('send.py', message)

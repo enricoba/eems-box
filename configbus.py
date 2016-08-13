@@ -15,7 +15,7 @@ class Interval(ConfigBus):
     def read(self):
         conf = self._read()
         value = [c for c in conf if c.strip('\n')[:8] == 'interval'][0].split(' ')[-1:][0].strip('\n')
-        return value
+        return int(value)
 
     def write(self, value):
         conf = self._read()
@@ -33,7 +33,7 @@ class Monitoring(ConfigBus):
     def read(self):
         conf = self._read()
         value = [c for c in conf if c.strip('\n')[:10] == 'monitoring'][0].split(' ')[-1:][0].strip('\n')
-        return value
+        return bool(value)
 
     def write(self, value):
         conf = self._read()
@@ -45,3 +45,7 @@ class Monitoring(ConfigBus):
             else:
                 conf_new += conf[x]
         self._write(conf_new)
+
+
+Interval = Interval()
+Monitoring = Monitoring()

@@ -4,9 +4,6 @@ from messagebus import MessageBus
 from threading import Thread
 
 
-bus = MessageBus()
-
-
 # start jobs
 class JobHandler(object):
     def __init__(self, job):
@@ -19,11 +16,11 @@ class JobHandler(object):
         self.job = subprocess.Popen(self.command)
         self.status = True
         time.sleep(1)
-        bus.send_logger(source='core', msg='{}-job startup'.format(self.job_name))
+        MessageBus.logger(source='core', msg='{}-job startup'.format(self.job_name))
 
     def term(self):
         if self.status is True:
-            bus.send_logger(source='core', msg='{}-job shutdown'.format(self.job_name))
+            MessageBus.logger(source='core', msg='{}-job shutdown'.format(self.job_name))
             if self.job_name == 'logger':
                 time.sleep(1)
             self.job.terminate()
@@ -39,7 +36,7 @@ def job_control(job):
         # message structure
         # message = {'action': 'start/stop'}
 
-        message = bus.receive('display')
+        message = MessageBus.receive('display')
         if message['action'] == 'stop':
             job.term()
         elif message['action'] == 'start':
@@ -48,7 +45,7 @@ def job_control(job):
 
 def main():
     try:
-        bus.send_logger(source='core', msg='core-job startup')
+        MessageBus.logger(source='core', msg='core-job startup')
         logger = JobHandler('logger.py')
         logger.start()
 

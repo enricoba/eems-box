@@ -39,8 +39,8 @@ class MessageBus(object):
         self.channel = None
         self.message = None
 
-    def send_single(self, queue, message):
-        """Public function *send_single* delivers messages to the RabbitMQ server.
+    def send(self, queue, message):
+        """Public function *send* delivers messages to the RabbitMQ server.
 
         :param queue: *string*
         :param message: *dict*
@@ -51,8 +51,8 @@ class MessageBus(object):
         self.channel.basic_publish(exchange='', routing_key=queue, body=body)
         self.__disconnect()
 
-    def send_logger(self, level='INFO', source=None, msg=None):
-        """Public function *send_single* delivers messages to the RabbitMQ server.
+    def logger(self, level='INFO', source=None, msg=None):
+        """Public function *logger* delivers messages to the RabbitMQ server.
 
         :param level: *string*
         :param source: *string*
@@ -67,8 +67,8 @@ class MessageBus(object):
         self.channel.basic_publish(exchange='', routing_key='logger', body=body)
         self.__disconnect()
 
-    def send_display(self, action):
-        """Public function *send_single* delivers messages to the RabbitMQ server.
+    def display(self, action):
+        """Public function *display* delivers messages to the RabbitMQ server.
 
         :param action: *string*
         :return: *None*
@@ -103,3 +103,5 @@ class MessageBus(object):
         message = self.message
         self.__disconnect()
         return message
+
+MessageBus = MessageBus()
