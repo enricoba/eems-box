@@ -4,7 +4,7 @@ import json
 
 class MessageBus(object):
     def __init__(self, host=None):
-        """Public object *RMI* provides functions to interact with the message interface.
+        """Public object *MessageBus* provides functions to interact with the message interface.
 
 
         :param host: *string*
