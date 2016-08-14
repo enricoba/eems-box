@@ -1,10 +1,8 @@
-import time
 from configbus import Interval
+import time
 
 
 def main():
-    print 'monitoring on'
-
     # get interval from DB
     interval = Interval.read()
 
@@ -14,7 +12,7 @@ def main():
 
     while True:
         # call for values and write to DB
-        print 'monitoring every {} seconds'.format(interval)
+        # print 'monitoring every {} seconds'.format(interval)
         timestamp += interval
         time.sleep(timestamp - time.time())
 

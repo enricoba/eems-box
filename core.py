@@ -1,7 +1,8 @@
-import time
-import subprocess
 from messagebus import MessageBus
+from configbus import Monitoring
 from threading import Thread
+import subprocess
+import time
 
 
 # start jobs
@@ -31,16 +32,22 @@ class JobHandler(object):
             return self.job.poll()
 
 
-def job_control(job):
+def job_control(job, bus):
     while True:
         # message structure
         # message = {'action': 'start/stop'}
 
-        message = MessageBus.receive('display')
+        message = MessageBus.receive(bus)
         if message['action'] == 'stop':
             job.term()
+            # setting monitoring flag false
+            if job.job_name == 'monitor':
+                Monitoring.write(False)
         elif message['action'] == 'start':
             job.start()
+            # setting monitoring flag true
+            if job.job_name == 'monitor':
+                Monitoring.write(True)
 
 
 def main():
@@ -49,8 +56,8 @@ def main():
         logger = JobHandler('logger.py')
         logger.start()
 
-        display = JobHandler('monitoring.py')
-        t = Thread(target=job_control, args=(display, ))
+        monitor = JobHandler('monitoring.py')
+        t = Thread(target=job_control, args=(monitor, 'display', ))
         t.setDaemon(True)
         t.start()
 
