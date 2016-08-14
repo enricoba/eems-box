@@ -25,6 +25,7 @@ class JobHandler(object):
             if self.job_name == 'logger':
                 time.sleep(1)
             self.job.terminate()
+            self.job.wait()
             self.status = False
 
     def poll(self):
@@ -66,6 +67,8 @@ def main():
 
     except KeyboardInterrupt:
         print 'KeyboardInterrupt'
+        logger.term()
+        monitor.term()
 
 
 if __name__ == '__main__':
