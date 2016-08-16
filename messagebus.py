@@ -104,4 +104,4 @@ class MessageBus(object):
         self.__disconnect()
         return message
 
-MessageBus = MessageBus()
+Bus = MessageBus()

@@ -1,4 +1,3 @@
-from messagebus import MessageBus
+from messagebus import Bus
 
-
-MessageBus.display('start')
+Bus.display('stop')

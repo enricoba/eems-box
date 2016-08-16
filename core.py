@@ -1,4 +1,4 @@
-from messagebus import MessageBus
+from messagebus import Bus
 from configbus import Monitoring
 from threading import Thread
 import subprocess
@@ -17,11 +17,11 @@ class JobHandler(object):
         self.job = subprocess.Popen(self.command)
         self.status = True
         time.sleep(1)
-        MessageBus.logger(source='core', msg='{}-job startup'.format(self.job_name))
+        Bus.logger(source='core', msg='{}-job startup'.format(self.job_name))
 
     def term(self):
         if self.status is True:
-            MessageBus.logger(source='core', msg='{}-job shutdown'.format(self.job_name))
+            Bus.logger(source='core', msg='{}-job shutdown'.format(self.job_name))
             if self.job_name == 'logger':
                 time.sleep(1)
             self.job.terminate()
@@ -33,31 +33,31 @@ class JobHandler(object):
             return self.job.poll()
 
 
-def job_control(job, bus):
+def job_control(job, ab):
     while True:
         # message structure
         # message = {'action': 'start/stop'}
 
-        message = MessageBus.receive(bus)
+        message = Bus.receive(ab)
         if message['action'] == 'stop':
             job.term()
             # setting monitoring flag false
-            if job.job_name == 'monitor':
+            if job.job_name == 'monitoring':
                 Monitoring.write(False)
         elif message['action'] == 'start':
             job.start()
             # setting monitoring flag true
-            if job.job_name == 'monitor':
+            if job.job_name == 'monitoring':
                 Monitoring.write(True)
 
 
 def main():
+    logger = JobHandler('logger.py')
+    monitor = JobHandler('monitoring.py')
     try:
-        MessageBus.logger(source='core', msg='core-job startup')
-        logger = JobHandler('logger.py')
+        Bus.logger(source='core', msg='core-job startup')
         logger.start()
 
-        monitor = JobHandler('monitoring.py')
         t = Thread(target=job_control, args=(monitor, 'display', ))
         t.setDaemon(True)
         t.start()

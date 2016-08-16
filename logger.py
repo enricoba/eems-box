@@ -1,4 +1,4 @@
-from messagebus import MessageBus
+from messagebus import Bus
 import logging
 
 
@@ -51,7 +51,7 @@ class Logger(object):
 def main():
     logger = Logger()
     while True:
-        message = MessageBus.receive('logger')
+        message = Bus.receive('logger')
         logger.write_log(message)
 
 if __name__ == '__main__':
