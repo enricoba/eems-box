@@ -51,7 +51,7 @@ class MessageBus(object):
         self.channel.basic_publish(exchange='', routing_key=queue, body=body)
         self.__disconnect()
 
-    def logger(self, level='INFO', source=None, msg=None):
+    def logger(self, level='WARNING', source=None, msg=None):
         """Public function *logger* delivers messages to the RabbitMQ server.
 
         :param level: *string*

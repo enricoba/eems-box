@@ -23,7 +23,7 @@ class JobHandler(object):
         if self.status is True:
             Bus.logger(source='core', msg='{}-job shutdown'.format(self.job_name))
             if self.job_name == 'logger':
-                time.sleep(1)
+                time.sleep(3)
             self.job.terminate()
             self.job.wait()
             self.status = False
@@ -67,8 +67,8 @@ def main():
 
     except KeyboardInterrupt:
         print 'KeyboardInterrupt'
-        logger.term()
         monitor.term()
+        logger.term()
 
 
 if __name__ == '__main__':

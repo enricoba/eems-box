@@ -15,17 +15,17 @@ class Logger(object):
         log_date_format = '%Y-%m-%d %H:%M:%S'
         log_file = 'eems.log'
 
-        logging.basicConfig(level=logging.INFO,
+        logging.basicConfig(level=logging.WARNING,
                             format=log_format,
                             datefmt=log_date_format,
                             filename=log_file)
 
         self.logger = logging.getLogger('eems')
-        self.log_lvl_info = {'DEBUG': 10,
-                             'INFO': 20,
-                             'WARNING': 30,
-                             'ERROR': 40,
-                             'CRITICAL': 50}
+        self.log_lvl_info = {'DEBUG':       10,
+                             'INFO':        20,
+                             'WARNING':     30,
+                             'ERROR':       40,
+                             'CRITICAL':    50}
 
     def write_log(self, msg_as_dict):
         """Public function *write_log* writes messages to the log file.
