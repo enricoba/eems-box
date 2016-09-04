@@ -69,6 +69,7 @@ def main():
         print 'KeyboardInterrupt'
         monitor.term()
         logger.term()
+        Bus.disconnect()
 
 
 if __name__ == '__main__':
