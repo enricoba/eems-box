@@ -1,3 +1,3 @@
 from messagebus import Bus
 
-Bus.display('start')
+Bus.display.send('stop')

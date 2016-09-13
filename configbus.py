@@ -1,4 +1,4 @@
-class _ConfigBus(object):
+class __ConfigBus(object):
     def __init__(self):
         """Private object *_ConfigBus* provides private functions for various config classes.
 
@@ -23,7 +23,7 @@ class _ConfigBus(object):
             conf.write(content)
 
 
-class _Interval(_ConfigBus):
+class _Interval(__ConfigBus):
     """Private class *_Interval* inherits from *_ConfigBus* and provides functions to manipulate the interval.
 
     """
@@ -53,7 +53,7 @@ class _Interval(_ConfigBus):
         self._write(conf_new)
 
 
-class _Monitoring(_ConfigBus):
+class _Monitoring(__ConfigBus):
     """Private class *_Monitoring* inherits from *_ConfigBus* and provides functions to manipulate the monitoring flag.
 
         """
@@ -83,5 +83,10 @@ class _Monitoring(_ConfigBus):
         self._write(conf_new)
 
 
-Interval = _Interval()
-Monitoring = _Monitoring()
+class Config(object):
+    def __init__(self):
+        self.interval = _Interval()
+        self.monitoring = _Monitoring()
+
+
+Config = Config()

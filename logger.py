@@ -15,7 +15,7 @@ class Logger(object):
         log_date_format = '%Y-%m-%d %H:%M:%S'
         log_file = 'eems.log'
 
-        logging.basicConfig(level=logging.WARNING,
+        logging.basicConfig(level=logging.INFO,
                             format=log_format,
                             datefmt=log_date_format,
                             filename=log_file)
@@ -34,14 +34,13 @@ class Logger(object):
         :return: *None*
         """
         self.logger.log(self.log_lvl_info[msg_as_dict[u'level']],
-                        '{}: {}'.format(msg_as_dict[u'source'],
-                                        msg_as_dict[u'msg']))
+                        '{}: {}'.format(msg_as_dict[u'source'], msg_as_dict[u'msg']))
 
 
 def main():
     logger = Logger()
     while True:
-        message = Bus.receive('logger')
+        message = Bus.logger.receive()
         logger.write_log(message)
 
 if __name__ == '__main__':

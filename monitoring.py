@@ -1,11 +1,11 @@
-from configbus import Interval
+from configbus import Config
 import time
 
 
 def main():
     # get interval from DB
     print 'monitoring started'
-    interval = Interval.read()
+    interval = Config.interval.read()
     print interval
     timestamp = int(time.time() / interval) * interval
     timestamp += interval

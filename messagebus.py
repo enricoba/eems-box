@@ -2,7 +2,7 @@ import pika
 import json
 
 
-class MessageBus(object):
+class __MessageBus(object):
     def __init__(self, host=None):
         """Public object *MessageBus* provides functions to interact with the message interface.
 
@@ -15,19 +15,19 @@ class MessageBus(object):
             _host = host
 
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=_host))
-        self.channel = dict()
-        self.message = dict()
+        self.channel = self.connection.channel()
+        self.message = None
 
-    def __send(self, queue, body):
+    def _send(self, queue, body):
         """Private function *__connect* reconnects to the host and establishes the channel after disconnect function has been
         called.
 
         :param queue: *string*.
         :return: *None*
         """
-        channel = self.connection.channel()
-        channel.queue_declare(queue=queue)
-        channel.basic_publish(exchange='', routing_key=queue, body=body)
+        body = json.dumps(body)
+        self.channel.queue_declare(queue=queue)
+        self.channel.basic_publish(exchange='', routing_key=queue, body=body)
 
     def disconnect(self):
         """Private function *__disconnect* closes the connection.
@@ -36,48 +36,7 @@ class MessageBus(object):
         """
         self.connection.close()
 
-    def send(self, queue, message):
-        """Public function *send* delivers messages to the RabbitMQ server.
-
-        :param queue: *string*
-        :param message: *dict*
-        :return: *None*
-        """
-        # self.__connect(queue=queue)
-        body = json.dumps(message)
-        self.__send(queue, body)
-        # self.channel.basic_publish(exchange='', routing_key=queue, body=body)
-        # self.__disconnect()
-
-    def logger(self, level='WARNING', source=None, msg=None):
-        """Public function *logger* delivers messages to the RabbitMQ server.
-
-        :param level: *string*
-        :param source: *string*
-        :param msg: *string*
-        :return: *None*
-        """
-        message = {'level':     level,
-                   'source':    source,
-                   'msg':       msg}
-        # self.__connect(queue='logger')
-        body = json.dumps(message)
-        self.__send('logger', body)
-
-    def display(self, action):
-        """Public function *display* delivers messages to the RabbitMQ server.
-
-        :param action: *string*
-        :return: *None*
-        """
-        message = {'action': action}
-        # self.__connect(queue='display')
-        body = json.dumps(message)
-        self.__send('display', body)
-        # self.channel.basic_publish(exchange='', routing_key='display', body=body)
-        # self.__disconnect()
-
-    def __callback(self, ch, method, properties, body, channel):
+    def __callback(self, ch, method, properties, body):
         """Private function *__callback* catches the values returned by the message.
 
         :param ch:
@@ -87,28 +46,53 @@ class MessageBus(object):
         :return: *None*
         """
         self.message = json.loads(body)
-        channel.stop_consuming()
-        print json.loads(body)
-        # ch.basic_ack(delivery_tag=method.delivery_tag)
+        self.channel.stop_consuming()
 
-    def receive(self, queue):
+    def _receive(self, queue):
         """Public function *receive* can be called to receive messages from the queue.
 
         :param queue: *string*
         :return: *dict*
         """
-        # self.__connect(queue=queue)
-        channel = self.connection.channel()
-        channel.queue_declare(queue=queue)
-        channel.basic_consume(self.__callback, queue=queue, no_ack=True)
-
-        channel.start_consuming()
+        self.channel.queue_declare(queue=queue)
+        self.channel.basic_consume(self.__callback, queue=queue, no_ack=True)
+        self.channel.start_consuming()
         message = self.message
-        # self.__disconnect()
+        self.message = None
         return message
 
-    class Receive(object):
-        def logger(self):
-            print 'receiver logger'
 
-Bus = MessageBus()
+class _Logger(__MessageBus):
+    def __init__(self):
+        super(_Logger, self).__init__()
+        self.queue = 'logger'
+
+    def send(self, level='WARNING', source=None, msg=None):
+        body = {'level':     level,
+                'source':    source,
+                'msg':       msg}
+        self._send(self.queue, body)
+
+    def receive(self):
+        return self._receive(self.queue)
+
+
+class _Display(__MessageBus):
+    def __init__(self):
+        super(_Display, self).__init__()
+        self.queue = 'display'
+
+    def send(self, action):
+        body = {'action':   action}
+        self._send(self.queue, body)
+
+    def receive(self):
+        return self._receive(self.queue)
+
+
+class Bus(object):
+    def __init__(self):
+        self.logger = _Logger()
+        self.display = _Display()
+
+Bus = Bus()
